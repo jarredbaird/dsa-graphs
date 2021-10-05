@@ -43,28 +43,43 @@ class Graph {
   }
 
   // this function returns an array of Node values using DFS
-  depthFirstSearch(start, stack = [start], searched = [], visited = new Set()) {
-    let current = stack.pop();
+  depthFirstSearch(current, toPrint = [], visited = new Set()) {
     // Base Case
     if (!current) {
-      console.log(searched);
-      return searched;
+      return null;
     }
 
     // Normal Case
-    if (visited.has(start)) {
-      current = stack.pop();
-      return this.depthFirstSearch(current, stack, searched, visited);
-    }
-    if (start.adjacent.size) stack.push(...start.adjacent);
-
     visited.add(current);
-    searched.push(current.value);
-    return this.depthFirstSearch(current, stack, searched, visited);
+    toPrint.push(current.value);
+    current.adjacent.forEach((relative) => {
+      if (visited.has(relative) === false) {
+        return this.depthFirstSearch(relative, toPrint, visited);
+      }
+    });
+    return toPrint;
   }
 
   // this function returns an array of Node values using BFS
-  breadthFirstSearch(start, queue = [start]) {}
+  breadthFirstSearch(
+    current,
+    queue = [current],
+    toPrint = [],
+    visited = new Set()
+  ) {
+    // Normal Case
+    if (!visited.has(current)) {
+      visited.add(current);
+      toPrint.push(current.value);
+      current.adjacent.forEach((relative) => {
+        queue.push(relative);
+      });
+    }
+    debugger;
+    return queue.length
+      ? this.breadthFirstSearch(queue.shift(), queue, toPrint, visited)
+      : toPrint;
+  }
 }
 
 module.exports = { Graph, Node };
